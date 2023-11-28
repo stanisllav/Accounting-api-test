@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Filters\TransactionFilter;
 use App\Models\Transaction;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
@@ -17,33 +18,16 @@ class TransactionController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $transactions = Transaction::query();
+
 
         $validated = $request->validate([
             'amount' => 'decimal:2',
             'date' => 'date',
             'type' => 'in:income,outcome'
         ]);
+        $filter = new TransactionFilter($validated);
+        $transactions = Transaction::filter($filter);
 
-
-        // Filter by date
-        if ($request->has('date')) {
-            $transactions->whereDate('created_at', $request->date);
-        }
-
-        // Filter by type: income, outcome
-        if ($request->has('type')) {
-            if ($request->type == 'income') {
-                $transactions->where('amount', '>', 0);
-            } elseif ($request->type == 'outcome') {
-                $transactions->where('amount', '<', 0);
-            }
-
-        }
-        // Filter by amount
-        if ($request->has('amount')) {
-            $transactions->where('amount', $request->amount);
-        }
 
         // Filter transactions to include only those belonging to the authenticated user
         $transactions->where('author_id', auth()->user()->id);
@@ -68,7 +52,7 @@ class TransactionController extends Controller
 
 
         $transaction = new Transaction;
-        if($request->has('title')){
+        if ($request->has('title')) {
             $transaction->title = $validated['title'];
         }
         $transaction->amount = $validated['amount'];
