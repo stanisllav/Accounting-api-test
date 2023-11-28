@@ -11,7 +11,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class TransactionCreated
+class TransactionCreated implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -24,4 +24,8 @@ class TransactionCreated
     }
 
 
+    public function broadcastOn(): PrivateChannel
+    {
+        return new PrivateChannel('user.'.$this->transaction->author_id);
+    }
 }
