@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Events\TransactionCreated;
+use App\Listeners\LogTransaction;
 use App\Listeners\SendTransactionCreatedNotification;
 use App\Listeners\TransactionCreatedBroadcast;
 use Illuminate\Auth\Events\Registered;
@@ -18,7 +19,8 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         TransactionCreated::class => [
-            SendTransactionCreatedNotification::class
+            SendTransactionCreatedNotification::class,
+            LogTransaction::class
         ],
         Registered::class => [
             SendEmailVerificationNotification::class,
