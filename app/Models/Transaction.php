@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\TransactionCreated;
 use App\Filters\TransactionFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,6 +13,9 @@ class Transaction extends Model
 {
     use HasFactory;
 
+    protected $dispatchesEvents = [
+        'created' => TransactionCreated::class,
+    ];
 
     public function author(): BelongsTo
     {
