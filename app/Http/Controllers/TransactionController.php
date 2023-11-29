@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Facades\CurrencyConverter;
 use App\Filters\TransactionFilter;
 use App\Models\Transaction;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -150,6 +151,26 @@ class TransactionController extends Controller
         $transactions = Transaction::filter($filter);
 
         $sum = $transactions->sum('amount');
+
         return response()->json(['sum' => $sum]);
+    }
+
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function balance(Request $request): JsonResponse
+    {
+
+        $filters['author'] = auth()->user()->id;
+
+        $filter = new TransactionFilter(['author' => auth()->user()->id]);
+        $transactions = Transaction::filter($filter);
+
+        $sum = $transactions->sum('amount');
+
+        $converted = convertCurrency($sum, 'EUR', 'USD');
+        return response()->json(['sum' => $sum, 'usd' => number_format($converted, 2, ".", "")]);
     }
 }

@@ -24,6 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('transactions/income-sum', [TransactionController::class, 'incomeSum'])->name('transactions.incomeSum');
     Route::get('transactions/outcome-sum', [TransactionController::class, 'outcomeSum'])->name('transactions.outcomeSum');
     Route::get('transactions/total-sum', [TransactionController::class, 'totalSum'])->name('transactions.totalSum');
+    Route::get('transactions/balance', [TransactionController::class, 'balance'])->name('transactions.balance');
 
     Route::apiResource('transactions', TransactionController::class)->only([
         'index', 'store', 'show', 'destroy'
