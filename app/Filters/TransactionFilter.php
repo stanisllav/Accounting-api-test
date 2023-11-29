@@ -65,6 +65,42 @@ class TransactionFilter
     }
 
     /**
+     * Filter transactions based on the specified userId.
+     *
+     * @param Builder $query The Eloquent query builder instance.
+     * @param int $userId
+     * @return Builder The modified query builder instance.
+     */
+    public function author(Builder $query, int $userId): Builder
+    {
+        $query->where('author_id', $userId);
+        return $query;
+    }
+
+
+    /**
+     * @param Builder $query
+     * @param string $date
+     * @return Builder
+     */
+    public function start_date(Builder $query, string $date): Builder
+    {
+        $query->whereDate('created_at', '>=',$date);
+        return $query;
+    }
+
+    /**
+     * @param Builder $query
+     * @param string $date
+     * @return Builder
+     */
+    public function end_date(Builder $query, string $date): Builder
+    {
+        $query->whereDate('created_at', '<=',$date);
+        return $query;
+    }
+
+    /**
      * Apply the specified filters to the transaction query.
      *
      * @param Builder $query The Eloquent query builder instance.

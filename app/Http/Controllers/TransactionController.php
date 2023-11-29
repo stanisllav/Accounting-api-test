@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Filters\TransactionFilter;
 use App\Models\Transaction;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -25,12 +28,11 @@ class TransactionController extends Controller
             'date' => 'date',
             'type' => 'in:income,outcome'
         ]);
+        $validated['author'] = auth()->user()->id;
+
         $filter = new TransactionFilter($validated);
         $transactions = Transaction::filter($filter);
 
-
-        // Filter transactions to include only those belonging to the authenticated user
-        $transactions->where('author_id', auth()->user()->id);
 
         $result = $transactions->paginate(10);
 
@@ -87,5 +89,67 @@ class TransactionController extends Controller
         $this->authorize('delete', $transaction);
         $transaction->delete();
         return response()->json(null, 204);
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function incomeSum(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'date' => 'date',
+            'start_date' => 'date',
+            'end_date' => 'date'
+        ]);
+        $validated['type'] = 'income';
+        $validated['author'] = auth()->user()->id;
+
+        $filter = new TransactionFilter($validated);
+        $transactions = Transaction::filter($filter);
+
+        $sum = $transactions->sum('amount');
+        return response()->json(['sum' => $sum]);
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function outcomeSum(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'date' => 'date',
+            'start_date' => 'date',
+            'end_date' => 'date'
+        ]);
+        $validated['type'] = 'outcome';
+        $validated['author'] = auth()->user()->id;
+
+        $filter = new TransactionFilter($validated);
+        $transactions = Transaction::filter($filter);
+
+        $sum = $transactions->sum('amount');
+        return response()->json(['sum' => $sum]);
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function totalSum(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'date' => 'date',
+            'start_date' => 'date',
+            'end_date' => 'date'
+        ]);
+        $validated['author'] = auth()->user()->id;
+
+        $filter = new TransactionFilter($validated);
+        $transactions = Transaction::filter($filter);
+
+        $sum = $transactions->sum('amount');
+        return response()->json(['sum' => $sum]);
     }
 }
