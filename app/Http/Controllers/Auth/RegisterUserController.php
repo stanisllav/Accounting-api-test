@@ -12,15 +12,14 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 
-class RegisteredUserController extends Controller
+class RegisterUserController extends Controller
 {
     /**
-     * Handle an incoming registration request.
-     *
-     * @throws ValidationException
+     * Handle the incoming request.
      */
-    public function store(Request $request): Response
+    public function __invoke(Request $request)
     {
+
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
@@ -33,10 +32,9 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        event(new Registered($user));
 
         Auth::login($user);
 
-        return response()->noContent();
+        return response()->json(['user' => $user, 'token' => $user->createToken('auth:register')->plainTextToken]);
     }
 }

@@ -8,18 +8,18 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
-class AuthenticatedSessionController extends Controller
+class LoginController extends Controller
 {
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): Response
+    public function store(LoginRequest $request): \Illuminate\Http\JsonResponse
     {
         $request->authenticate();
 
-        $request->session()->regenerate();
+        $user = auth()->user();
 
-        return response()->noContent();
+        return response()->json(['user' => $user, 'token' => $user->createToken('auth:register')->plainTextToken]);
     }
 
     /**
@@ -27,11 +27,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): Response
     {
-        Auth::guard('web')->logout();
-
-        $request->session()->invalidate();
-
-        $request->session()->regenerateToken();
+        auth()->user()->tokens()->delete();
 
         return response()->noContent();
     }
