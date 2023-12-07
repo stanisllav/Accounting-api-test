@@ -25,7 +25,7 @@ abstract class CurrencyDriver
 
         $currencyKey = $from . "_" . $to;
 
-        $cacheKey = $this->getCacheKey($currencyKey);
+        $cacheKey = $this->getCacheKey();
 
         // Check if the exchange rate is already cached
         if (Cache::has($cacheKey)) {
