@@ -13,7 +13,7 @@ class RedirectIfAuthenticated
     /**
      * Handle an incoming request.
      *
-     * @param Closure(Request): (Response) $next
+     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next, string ...$guards): Response
     {
@@ -24,6 +24,7 @@ class RedirectIfAuthenticated
                 if ($request->expectsJson()) {
                     return response()->json(['message' => 'Already authenticated.'], 200);
                 }
+
                 return redirect(RouteServiceProvider::HOME);
             }
         }

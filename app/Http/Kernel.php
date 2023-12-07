@@ -46,7 +46,7 @@ class Kernel extends HttpKernel
         ValidatePostSize::class,
         TrimStrings::class,
         ConvertEmptyStringsToNull::class,
-        UpdateLastSeen::class
+        UpdateLastSeen::class,
     ];
 
     /**
@@ -62,14 +62,14 @@ class Kernel extends HttpKernel
             ShareErrorsFromSession::class,
             VerifyCsrfToken::class,
             SubstituteBindings::class,
-            UpdateLastSeen::class
+            UpdateLastSeen::class,
         ],
 
         'api' => [
-//            EnsureFrontendRequestsAreStateful::class,
-            ThrottleRequests::class . ':api',
+            //            EnsureFrontendRequestsAreStateful::class,
+            ThrottleRequests::class.':api',
             SubstituteBindings::class,
-            UpdateLastSeen::class
+            UpdateLastSeen::class,
         ],
     ];
 
@@ -91,6 +91,6 @@ class Kernel extends HttpKernel
         'precognitive' => HandlePrecognitiveRequests::class,
         'signed' => ValidateSignature::class,
         'throttle' => ThrottleRequests::class,
-        'verified' => EnsureEmailIsVerified::class
+        'verified' => EnsureEmailIsVerified::class,
     ];
 }

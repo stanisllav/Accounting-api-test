@@ -4,7 +4,6 @@ namespace App\Notifications;
 
 use App\Models\Transaction;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -38,9 +37,9 @@ class NewTransaction extends Notification
         return (new MailMessage)
             ->subject('New Transaction Created')
             ->line('A new transaction has been created:')
-            ->line('Title: ' . $this->transaction->title)
-            ->line('Amount: ' . $this->transaction->amount)
-            ->line('Date: ' . $this->transaction->created_at);
+            ->line('Title: '.$this->transaction->title)
+            ->line('Amount: '.$this->transaction->amount)
+            ->line('Date: '.$this->transaction->created_at);
     }
 
     /**

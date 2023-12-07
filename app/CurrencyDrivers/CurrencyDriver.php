@@ -6,24 +6,23 @@ use Illuminate\Support\Facades\Cache;
 
 abstract class CurrencyDriver
 {
-
     private $supportedCurrencies = ['USD', 'EUR'];
 
-    final public function getExchangeRate(string $from = "EUR", string $to = "USD"): float
+    final public function getExchangeRate(string $from = 'EUR', string $to = 'USD'): float
     {
 
-        if (!in_array($from, $this->supportedCurrencies)) {
+        if (! in_array($from, $this->supportedCurrencies)) {
             throw new \InvalidArgumentException("currency: $from not supported");
         }
-        if (!in_array($to, $this->supportedCurrencies)) {
+        if (! in_array($to, $this->supportedCurrencies)) {
             throw new \InvalidArgumentException("currency: $to not supported");
         }
         //
-        if ($from === $to)
+        if ($from === $to) {
             return 1;
+        }
 
-
-        $currencyKey = $from . "_" . $to;
+        $currencyKey = $from.'_'.$to;
 
         $cacheKey = $this->getCacheKey();
 
@@ -44,9 +43,8 @@ abstract class CurrencyDriver
     protected function getCacheKey(): string
     {
         // Generate a unique cache key based on the driver class and any specific parameters
-        return 'currency:' . static::class;
+        return 'currency:'.static::class;
     }
-
 
     public function clearCache(): void
     {
@@ -62,5 +60,4 @@ abstract class CurrencyDriver
         Cache::put($this->getCacheKey(), $exchangeRates, now()->addMinutes(config('currency.cache_duration')));
 
     }
-
 }

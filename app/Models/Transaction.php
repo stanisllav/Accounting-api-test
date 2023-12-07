@@ -21,7 +21,7 @@ use OpenApi\Attributes as OA;
         new OA\Property(property: 'amount', type: 'number', format: 'float'),
         new OA\Property(property: 'author_id', type: 'integer'),
         new OA\Property(property: 'created_at', type: 'string', format: 'date'),
-        new OA\Property(property: 'updated_at', type: 'string', format: 'date')
+        new OA\Property(property: 'updated_at', type: 'string', format: 'date'),
     ],
     type: 'object'
 )]
@@ -41,6 +41,7 @@ class Transaction extends Model
     public function scopeFilter(Builder $query, TransactionFilter $filter): Builder
     {
         $filter->apply($query);
+
         return $query;
     }
 }

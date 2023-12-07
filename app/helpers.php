@@ -1,6 +1,5 @@
 <?php
 
-
 use App\Facades\CurrencyConverter;
 
 function convertCurrency($amount, $from, $to)

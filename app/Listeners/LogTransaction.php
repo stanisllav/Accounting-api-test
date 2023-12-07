@@ -4,7 +4,6 @@ namespace App\Listeners;
 
 use App\Events\TransactionCreated;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Log;
 
 class LogTransaction implements ShouldQueue
@@ -22,6 +21,6 @@ class LogTransaction implements ShouldQueue
      */
     public function handle(TransactionCreated $event): void
     {
-        Log::notice("New Transaction: ", [$event->transaction]);
+        Log::notice('New Transaction: ', [$event->transaction]);
     }
 }

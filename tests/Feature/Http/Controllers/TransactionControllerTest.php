@@ -5,13 +5,10 @@ namespace Tests\Feature\Http\Controllers;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use function PHPUnit\Framework\assertTrue;
 
 class TransactionControllerTest extends TestCase
 {
-
     use RefreshDatabase;
 
     /** @test */
@@ -21,7 +18,7 @@ class TransactionControllerTest extends TestCase
         $transaction = Transaction::factory(25)->create(['author_id' => $user->id]);
 
         $response = $this->actingAs($user)
-            ->getJson( 'api/transactions');
+            ->getJson('api/transactions');
 
         $response->assertStatus(200)
             ->assertJsonCount(10, 'data'); // Assuming you paginate by 10 items per page
@@ -30,10 +27,10 @@ class TransactionControllerTest extends TestCase
     /** @test */
     public function it_shows_a_specific_transaction()
     {
-       $user = User::factory()->create();
+        $user = User::factory()->create();
         $transaction = Transaction::factory()->create(['author_id' => $user->id]);
 
-       $response = $this->actingAs($user)
+        $response = $this->actingAs($user)
             ->getJson("api/transactions/{$transaction->id}");
 
         $response->assertStatus(200)
@@ -54,5 +51,4 @@ class TransactionControllerTest extends TestCase
         // Ensure the transaction is deleted
         $this->assertDatabaseMissing('transactions', ['id' => $transaction->id]);
     }
-
 }

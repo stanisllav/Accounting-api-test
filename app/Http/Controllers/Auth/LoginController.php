@@ -5,13 +5,10 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
 use OpenApi\Attributes as OA;
 
 class LoginController extends Controller
 {
-
     #[OA\Post(
         path: '/api/login',
         summary: 'Handle an incoming authentication request',
@@ -23,7 +20,7 @@ class LoginController extends Controller
                     required: ['email', 'password'],
                     properties: [
                         new OA\Property(property: 'email', type: 'string', format: 'email'),
-                        new OA\Property(property: 'password', type: 'string', format: 'password')
+                        new OA\Property(property: 'password', type: 'string', format: 'password'),
                     ]
                 )
             )
@@ -37,7 +34,7 @@ class LoginController extends Controller
             title: 'data',
             properties: [
                 new OA\Property(property: 'user', ref: '#/components/schemas/User', type: 'object'),
-                new OA\Property(property: 'token', type: 'string', example: 'jK4vOOBBGy1tM0NOQWTY745xdPddS4IyvHRVNbDU34093fa7')
+                new OA\Property(property: 'token', type: 'string', example: 'jK4vOOBBGy1tM0NOQWTY745xdPddS4IyvHRVNbDU34093fa7'),
             ]
         )
     )]
@@ -50,7 +47,6 @@ class LoginController extends Controller
 
         return response()->json(['user' => $user, 'token' => $user->createToken('auth:register')->plainTextToken]);
     }
-
 
     #[OA\Post(path: '/api/logout', security: [['sanctum' => []]], tags: ['Authentication'])]
     #[OA\Response(response: 204, description: 'Destroy session', content: new OA\JsonContent())]

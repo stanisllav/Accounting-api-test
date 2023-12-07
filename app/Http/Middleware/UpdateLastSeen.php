@@ -5,8 +5,6 @@ namespace App\Http\Middleware;
 use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class UpdateLastSeen
@@ -14,7 +12,7 @@ class UpdateLastSeen
     /**
      * Handle an incoming request.
      *
-     * @param Closure(Request): (Response) $next
+     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
@@ -25,7 +23,6 @@ class UpdateLastSeen
 
             User::where('id', $user->id)->update(['last_seen' => now()]);
         }
-
 
         return $next($request);
     }

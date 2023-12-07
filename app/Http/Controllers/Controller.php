@@ -7,7 +7,6 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use OpenApi\Attributes as OA;
 
-
 #[OA\Info(
     version: '0.0.1',
     description: 'Personal Accounting API empowers authorized users to seamlessly manage their personal finances by recording income and expenses.

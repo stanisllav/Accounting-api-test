@@ -9,14 +9,13 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use OpenApi\Attributes as OA;
 
-
 #[OA\Schema(
     schema: 'User',
     title: 'User',
     description: 'User Model',
     properties: [
         new OA\Property(property: 'name', type: 'string'),
-        new OA\Property(property: 'email', type: 'string', format: 'email')
+        new OA\Property(property: 'email', type: 'string', format: 'email'),
     ],
     type: 'object'
 )]

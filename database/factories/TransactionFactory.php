@@ -18,7 +18,7 @@ class TransactionFactory extends Factory
     {
         return [
             'title' => fake()->word(),
-            'amount' => fake()->randomFloat([2])
+            'amount' => fake()->randomFloat([2]),
         ];
     }
 }

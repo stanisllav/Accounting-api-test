@@ -167,7 +167,7 @@ return [
          */
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
-         App\Providers\BroadcastServiceProvider::class,
+        App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
     ])->toArray(),
@@ -184,7 +184,7 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
-         'CurrencyConverter' => App\Facades\CurrencyConverter::class,
+        'CurrencyConverter' => App\Facades\CurrencyConverter::class,
     ])->toArray(),
 
 ];

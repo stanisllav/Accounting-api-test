@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use OpenApi\Attributes as OA;
 
-
 #[OA\Post(
     path: '/api/register',
     summary: 'Register new User',
@@ -39,7 +38,7 @@ use OpenApi\Attributes as OA;
         title: 'data',
         properties: [
             new OA\Property(property: 'user', ref: '#/components/schemas/User', type: 'object'),
-            new OA\Property(property: 'token', type: 'string', example: 'jK4vOOBBGy1tM0NOQWTY745xdPddS4IyvHRVNbDU34093fa7')
+            new OA\Property(property: 'token', type: 'string', example: 'jK4vOOBBGy1tM0NOQWTY745xdPddS4IyvHRVNbDU34093fa7'),
         ]
     )
 )]
@@ -54,7 +53,7 @@ class RegisterUserController extends Controller
 
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
@@ -63,7 +62,6 @@ class RegisterUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
-
 
         Auth::login($user);
 

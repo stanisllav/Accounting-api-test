@@ -6,10 +6,8 @@ use Illuminate\Support\Facades\Storage;
 
 class CsvCurrencyDriver extends CurrencyDriver
 {
-
     public function fetchData(): array
     {
-
 
         $csv = Storage::get('currency/currency.csv');
 
@@ -34,6 +32,7 @@ class CsvCurrencyDriver extends CurrencyDriver
             if ($isHeader) {
                 // Skip the header and set the flag to false
                 $isHeader = false;
+
                 continue;
             }
 
@@ -41,8 +40,6 @@ class CsvCurrencyDriver extends CurrencyDriver
             $currencyData[$data[0]] = $data[1];
         }
 
-
         return $currencyData;
     }
-
 }
