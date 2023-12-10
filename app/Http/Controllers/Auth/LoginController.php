@@ -27,7 +27,7 @@ class LoginController extends Controller
         ),
         tags: ['Authentication'])]
     #[OA\Response(
-        response: 204,
+        response: 200,
         description: 'Returns User Model And Access Token',
         content: new OA\JsonContent(
             schema: 'array',
@@ -52,8 +52,9 @@ class LoginController extends Controller
     #[OA\Response(response: 204, description: 'Destroy session', content: new OA\JsonContent())]
     public function destroy(Request $request): \Illuminate\Http\JsonResponse
     {
-        auth()->user()->tokens()->delete();
 
-        return response()->json();
+        auth()->user()->currentAccessToken()->delete();
+
+        return response()->json(null, 204);
     }
 }

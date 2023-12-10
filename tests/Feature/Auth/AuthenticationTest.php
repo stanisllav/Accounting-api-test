@@ -4,6 +4,7 @@ namespace Tests\Feature\Auth;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class AuthenticationTest extends TestCase
@@ -14,20 +15,25 @@ class AuthenticationTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->post('/login', [
+        $response = $this->post('/api/login', [
             'email' => $user->email,
             'password' => 'password',
         ]);
 
         $this->assertAuthenticated();
-        $response->assertNoContent();
+        $response->assertStatus(200);
+        // Asserting that the user's token is in the database
+        $this->assertDatabaseHas('personal_access_tokens', [
+            'tokenable_id' => $user->id,
+            'tokenable_type' => get_class($user),
+        ]);
     }
 
     public function test_users_can_not_authenticate_with_invalid_password(): void
     {
         $user = User::factory()->create();
 
-        $this->post('/login', [
+        $this->post('/api/login', [
             'email' => $user->email,
             'password' => 'wrong-password',
         ]);
@@ -37,11 +43,22 @@ class AuthenticationTest extends TestCase
 
     public function test_users_can_logout(): void
     {
+        // Create a user for testing
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->post('/logout');
+        // Acting as the user and creating a Sanctum token
+        Sanctum::actingAs($user);
 
-        $this->assertGuest();
-        $response->assertNoContent();
+        // Making a request to the logout endpoint
+        $response = $this->postJson('/api/logout');
+
+//        // Asserting that the response has a 204 status code
+        $response->assertStatus(204);
+
+        // Asserting that the user's token has been deleted
+        $this->assertDatabaseMissing('personal_access_tokens', [
+            'tokenable_id' => $user->id,
+            'tokenable_type' => get_class($user),
+        ]);
     }
 }

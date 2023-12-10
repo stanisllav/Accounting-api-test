@@ -1,0 +1,12 @@
+{
+    "exchangeRates": [
+        {
+            "currency": "USD_EUR",
+            "rate": 0.95
+        },
+        {
+            "currency": "EUR_USD",
+            "rate": 1.08
+        }
+    ]
+}

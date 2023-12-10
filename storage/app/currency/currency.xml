@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<exchangeRates>
+    <currency>
+        <code>USD_EUR</code>
+        <rate>0.89</rate>
+    </currency>
+    <currency>
+        <code>EUR_USD</code>
+        <rate>1.15</rate>
+    </currency>
+</exchangeRates>

@@ -31,7 +31,7 @@ use OpenApi\Attributes as OA;
     ),
     tags: ['Authentication'])]
 #[OA\Response(
-    response: 204,
+    response: 201,
     description: 'Returns User Model And Access Token',
     content: new OA\JsonContent(
         schema: 'array',
@@ -65,6 +65,6 @@ class RegisterUserController extends Controller
 
         Auth::login($user);
 
-        return response()->json(['user' => $user, 'token' => $user->createToken('auth:register')->plainTextToken]);
+        return response()->json(['user' => $user, 'token' => $user->createToken('auth:register')->plainTextToken], 201);
     }
 }
