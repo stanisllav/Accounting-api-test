@@ -35,7 +35,7 @@ class NewTransaction extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('New Transaction Created')
+            ->subject('New TransactionResource Created')
             ->line('A new transaction has been created:')
             ->line('Title: '.$this->transaction->title)
             ->line('Amount: '.$this->transaction->amount)

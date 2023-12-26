@@ -21,6 +21,6 @@ class LogTransaction implements ShouldQueue
      */
     public function handle(TransactionCreated $event): void
     {
-        Log::notice('New Transaction: ', [$event->transaction]);
+        Log::notice('New TransactionResource: ', [$event->transaction]);
     }
 }

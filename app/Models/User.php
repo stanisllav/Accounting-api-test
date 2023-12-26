@@ -10,8 +10,8 @@ use Laravel\Sanctum\HasApiTokens;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema(
-    schema: 'User',
-    title: 'User',
+    schema: 'UserModel',
+    title: 'UserModel',
     description: 'User Model',
     properties: [
         new OA\Property(property: 'name', type: 'string'),

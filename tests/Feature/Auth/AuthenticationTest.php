@@ -52,7 +52,7 @@ class AuthenticationTest extends TestCase
         // Making a request to the logout endpoint
         $response = $this->postJson('/api/logout');
 
-//        // Asserting that the response has a 204 status code
+        //        // Asserting that the response has a 204 status code
         $response->assertStatus(204);
 
         // Asserting that the user's token has been deleted

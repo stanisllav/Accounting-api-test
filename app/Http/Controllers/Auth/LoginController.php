@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use OpenApi\Attributes as OA;
 
@@ -33,7 +34,7 @@ class LoginController extends Controller
             schema: 'array',
             title: 'data',
             properties: [
-                new OA\Property(property: 'user', ref: '#/components/schemas/User', type: 'object'),
+                new OA\Property(property: 'user', ref: '#/components/schemas/UserResource', type: 'object'),
                 new OA\Property(property: 'token', type: 'string', example: 'jK4vOOBBGy1tM0NOQWTY745xdPddS4IyvHRVNbDU34093fa7'),
             ]
         )
@@ -43,9 +44,9 @@ class LoginController extends Controller
     {
         $request->authenticate();
 
-        $user = auth()->user();
+        $user = $request->user();
 
-        return response()->json(['user' => $user, 'token' => $user->createToken('auth:register')->plainTextToken]);
+        return response()->json(['user' => UserResource::make($user), 'token' => $user->createToken('auth:register')->plainTextToken]);
     }
 
     #[OA\Post(path: '/api/logout', security: [['sanctum' => []]], tags: ['Authentication'])]
