@@ -46,7 +46,7 @@
                                     "title": "data",
                                     "properties": {
                                         "user": {
-                                            "$ref": "#/components/schemas/User"
+                                            "$ref": "#/components/schemas/UserResource"
                                         },
                                         "token": {
                                             "type": "string",
@@ -146,7 +146,7 @@
                                     "title": "data",
                                     "properties": {
                                         "user": {
-                                            "$ref": "#/components/schemas/User"
+                                            "$ref": "#/components/schemas/UserResource"
                                         },
                                         "token": {
                                             "type": "string",
@@ -211,55 +211,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "schema": "array",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/Transaction"
-                                            }
-                                        },
-                                        "current_page": {
-                                            "type": "integer"
-                                        },
-                                        "next_page_url": {
-                                            "type": "string"
-                                        },
-                                        "path": {
-                                            "type": "string"
-                                        },
-                                        "per_page": {
-                                            "type": "integer"
-                                        },
-                                        "prev_page_url": {
-                                            "type": "string"
-                                        },
-                                        "to": {
-                                            "type": "integer"
-                                        },
-                                        "total": {
-                                            "type": "integer"
-                                        },
-                                        "first_page_url": {
-                                            "type": "string"
-                                        },
-                                        "from": {
-                                            "type": "integer"
-                                        },
-                                        "last_page": {
-                                            "type": "string"
-                                        },
-                                        "last_page_url": {
-                                            "type": "string"
-                                        },
-                                        "links": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object"
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/TransactionCollection"
                                 }
                             }
                         }
@@ -283,7 +235,7 @@
                 "tags": [
                     "Transactions"
                 ],
-                "summary": "Add new Transaction",
+                "summary": "Add new TransactionResource",
                 "operationId": "bb0d462f0efb4302367e2f8fe1ac23c3",
                 "requestBody": {
                     "content": {
@@ -309,11 +261,11 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Created Transaction",
+                        "description": "Created TransactionResource",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Transaction"
+                                    "$ref": "#/components/schemas/TransactionResource"
                                 }
                             }
                         }
@@ -341,11 +293,11 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Transaction",
+                        "description": "TransactionResource",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Transaction"
+                                    "$ref": "#/components/schemas/TransactionResource"
                                 }
                             }
                         }
@@ -595,9 +547,79 @@
     },
     "components": {
         "schemas": {
-            "Transaction": {
-                "title": "Transaction",
-                "description": "Transaction Model",
+            "TransactionCollection": {
+                "title": "TransactionCollection",
+                "description": "TransactionCollection",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TransactionResource"
+                        }
+                    },
+                    "current_page": {
+                        "type": "integer"
+                    },
+                    "per_page": {
+                        "type": "integer"
+                    },
+                    "total": {
+                        "type": "integer"
+                    },
+                    "last_page": {
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "TransactionResource": {
+                "title": "TransactionResource",
+                "description": "TransactionResource",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "amount": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "author": {
+                        "$ref": "#/components/schemas/UserResource"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date"
+                    }
+                },
+                "type": "object"
+            },
+            "UserResource": {
+                "title": "UserResource",
+                "description": "User Resource",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "last_seen": {
+                        "type": "string",
+                        "format": "date"
+                    }
+                },
+                "type": "object"
+            },
+            "TransactionModel": {
+                "title": "TransactionModel",
+                "description": "TransactionModel",
                 "properties": {
                     "id": {
                         "type": "integer"
@@ -623,8 +645,8 @@
                 },
                 "type": "object"
             },
-            "User": {
-                "title": "User",
+            "UserModel": {
+                "title": "UserModel",
                 "description": "User Model",
                 "properties": {
                     "name": {

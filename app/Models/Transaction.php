@@ -12,9 +12,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema(
-    schema: 'Transaction',
-    title: 'Transaction',
-    description: 'Transaction Model',
+    schema: 'TransactionModel',
+    title: 'TransactionModel',
+    description: 'TransactionModel',
     properties: [
         new OA\Property(property: 'id', type: 'integer'),
         new OA\Property(property: 'title', type: 'string'),

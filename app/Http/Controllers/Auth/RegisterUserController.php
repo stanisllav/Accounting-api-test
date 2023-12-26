@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
 use OpenApi\Attributes as OA;
 
 #[OA\Post(
@@ -37,7 +36,7 @@ use OpenApi\Attributes as OA;
         schema: 'array',
         title: 'data',
         properties: [
-            new OA\Property(property: 'user', ref: '#/components/schemas/User', type: 'object'),
+            new OA\Property(property: 'user', ref: '#/components/schemas/UserResource', type: 'object'),
             new OA\Property(property: 'token', type: 'string', example: 'jK4vOOBBGy1tM0NOQWTY745xdPddS4IyvHRVNbDU34093fa7'),
         ]
     )
@@ -50,21 +49,12 @@ class RegisterUserController extends Controller
      */
     public function __invoke(Request $request): JsonResponse
     {
-
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
-
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
-        Auth::login($user);
-
-        return response()->json(['user' => $user, 'token' => $user->createToken('auth:register')->plainTextToken], 201);
+        return response()->json(['user' => UserResource::make($user), 'token' => $user->createToken('auth:register')->plainTextToken], 201);
     }
 }

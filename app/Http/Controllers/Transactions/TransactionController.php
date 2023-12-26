@@ -4,7 +4,12 @@ namespace App\Http\Controllers\Transactions;
 
 use App\Filters\TransactionFilter;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Transactions\ShowTransactionRequest;
+use App\Http\Requests\Transactions\StoreTransactionRequest;
+use App\Http\Resources\TransactionCollection;
+use App\Http\Resources\TransactionResource;
 use App\Models\Transaction;
+use App\Services\TransactionsService;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -24,44 +29,24 @@ class TransactionController extends Controller
         response: 200,
         description: 'A paginated set of Transactions',
         content: new OA\JsonContent(
-            schema: 'array',
-            properties: [
-                new OA\Property(property: 'data', type: 'array', items: new OA\Items(ref: '#/components/schemas/Transaction')),
-                new OA\Property(property: 'current_page', type: 'integer'),
-                new OA\Property(property: 'next_page_url', type: 'string'),
-                new OA\Property(property: 'path', type: 'string'),
-                new OA\Property(property: 'per_page', type: 'integer'),
-                new OA\Property(property: 'prev_page_url', type: 'string'),
-                new OA\Property(property: 'to', type: 'integer'),
-                new OA\Property(property: 'total', type: 'integer'),
-                new OA\Property(property: 'first_page_url', type: 'string'),
-                new OA\Property(property: 'from', type: 'integer'),
-                new OA\Property(property: 'last_page', type: 'string'),
-                new OA\Property(property: 'last_page_url', type: 'string'),
-                new OA\Property(property: 'links', type: 'array', items: new OA\Items(type: 'object')),
-            ]
+            ref: '#/components/schemas/TransactionCollection'
         )
     )]
     #[OA\Response(response: 401, description: 'Unauthorized', content: new OA\JsonContent())]
-    public function index(Request $request): JsonResponse
+    public function index(ShowTransactionRequest $request): JsonResponse
     {
 
-        $validated = $request->validate([
-            'amount' => 'decimal:2',
-            'date' => 'date',
-            'type' => 'in:income,outcome',
-        ]);
-        $validated['author'] = auth()->user()->id;
+        $validated = $request->validated();
 
-        $filter = new TransactionFilter($validated);
+        $filter = new TransactionFilter($validated + ['author' => $request->user()->id]);
         $transactions = Transaction::filter($filter);
 
         $result = $transactions->paginate(10);
 
-        return response()->json($result);
+        return response()->json(TransactionCollection::make($result));
     }
 
-    #[OA\Post(path: '/api/transactions', summary: 'Add new Transaction', security: [['sanctum' => []]], requestBody: new OA\RequestBody(
+    #[OA\Post(path: '/api/transactions', summary: 'Add new TransactionResource', security: [['sanctum' => []]], requestBody: new OA\RequestBody(
         content: new OA\MediaType(
             mediaType: 'application/x-www-form-urlencoded',
             schema: new OA\Schema(
@@ -74,23 +59,12 @@ class TransactionController extends Controller
         )
     ),
         tags: ['Transactions'], )]
-    #[OA\Response(response: 201, description: 'Created Transaction', content: new OA\JsonContent(ref: '#/components/schemas/Transaction'))]
-    public function store(Request $request): JsonResponse
+    #[OA\Response(response: 201, description: 'Created TransactionResource', content: new OA\JsonContent(ref: '#/components/schemas/TransactionResource'))]
+    public function store(StoreTransactionRequest $request, TransactionsService $transactionsService): JsonResponse
     {
-        $validated = $request->validate([
-            'title' => 'max:255',
-            'amount' => 'numeric|required|not_in:0',
-        ]);
+        $transaction = $transactionsService->createTransaction($request->toDTO());
 
-        $transaction = new Transaction;
-        if ($request->has('title')) {
-            $transaction->title = $validated['title'];
-        }
-        $transaction->amount = $validated['amount'];
-        $transaction->author()->associate(auth()->user());
-        $transaction->save();
-
-        return response()->json($transaction, 201);
+        return response()->json(TransactionResource::make($transaction), 201);
     }
 
     /**
@@ -102,14 +76,14 @@ class TransactionController extends Controller
         parameters: [
             new OA\Parameter(name: 'id', in: 'path'),
         ])]
-    #[OA\Response(response: 200, description: 'Transaction', content: new OA\JsonContent(ref: '#/components/schemas/Transaction'))]
+    #[OA\Response(response: 200, description: 'TransactionResource', content: new OA\JsonContent(ref: '#/components/schemas/TransactionResource'))]
     #[OA\Response(response: 404, description: 'Not found', content: new OA\JsonContent())]
     #[OA\Response(response: 403, description: 'Forbidden', content: new OA\JsonContent())]
     public function show(Transaction $transaction): JsonResponse
     {
         $this->authorize('show', $transaction);
 
-        return response()->json($transaction);
+        return response()->json(TransactionResource::make($transaction));
     }
 
     /**
@@ -140,17 +114,10 @@ class TransactionController extends Controller
         ]
     )]
     #[OA\Response(response: 200, description: 'Total income', content: new OA\JsonContent())]
-    public function incomeSum(Request $request): JsonResponse
+    public function incomeSum(ShowTransactionRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'date' => 'date',
-            'start_date' => 'date',
-            'end_date' => 'date',
-        ]);
-        $validated['type'] = 'income';
-        $validated['author'] = auth()->user()->id;
-
-        $filter = new TransactionFilter($validated);
+        $validated = $request->validated();
+        $filter = new TransactionFilter($validated + ['type' => 'income', 'author' => $request->user()->id]);
         $transactions = Transaction::filter($filter);
 
         $sum = $transactions->sum('amount');
@@ -166,17 +133,10 @@ class TransactionController extends Controller
         ]
     )]
     #[OA\Response(response: 200, description: 'Total outcome', content: new OA\JsonContent())]
-    public function outcomeSum(Request $request): JsonResponse
+    public function outcomeSum(ShowTransactionRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'date' => 'date',
-            'start_date' => 'date',
-            'end_date' => 'date',
-        ]);
-        $validated['type'] = 'outcome';
-        $validated['author'] = auth()->user()->id;
-
-        $filter = new TransactionFilter($validated);
+        $validated = $request->validated();
+        $filter = new TransactionFilter($validated + ['type' => 'outcome', 'author' => $request->user()->id]);
         $transactions = Transaction::filter($filter);
 
         $sum = $transactions->sum('amount');
@@ -192,16 +152,10 @@ class TransactionController extends Controller
         ]
     )]
     #[OA\Response(response: 200, description: 'Total sum', content: new OA\JsonContent())]
-    public function totalSum(Request $request): JsonResponse
+    public function totalSum(ShowTransactionRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'date' => 'date',
-            'start_date' => 'date',
-            'end_date' => 'date',
-        ]);
-        $validated['author'] = auth()->user()->id;
-
-        $filter = new TransactionFilter($validated);
+        $validated = $request->validated();
+        $filter = new TransactionFilter($validated + ['author' => $request->user()->id]);
         $transactions = Transaction::filter($filter);
 
         $sum = $transactions->sum('amount');
@@ -215,9 +169,7 @@ class TransactionController extends Controller
     public function balance(Request $request): JsonResponse
     {
 
-        $filters['author'] = auth()->user()->id;
-
-        $filter = new TransactionFilter(['author' => auth()->user()->id]);
+        $filter = new TransactionFilter(['author' => $request->user()->id]);
         $transactions = Transaction::filter($filter);
 
         $sum = $transactions->sum('amount');
