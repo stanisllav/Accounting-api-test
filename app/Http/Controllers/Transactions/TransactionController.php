@@ -17,6 +17,12 @@ use OpenApi\Attributes as OA;
 
 class TransactionController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->authorizeResource(Transaction::class);
+    }
+
     #[OA\Get(path: '/api/transactions', summary: 'Returns a paginated set of Transactions', security: [['sanctum' => []]], tags: ['Transactions'],
         parameters: [
             new OA\Parameter(name: 'page', in: 'query'),
@@ -81,8 +87,6 @@ class TransactionController extends Controller
     #[OA\Response(response: 403, description: 'Forbidden', content: new OA\JsonContent())]
     public function show(Transaction $transaction): JsonResponse
     {
-        $this->authorize('show', $transaction);
-
         return response()->json(TransactionResource::make($transaction));
     }
 
@@ -100,9 +104,7 @@ class TransactionController extends Controller
     #[OA\Response(response: 403, description: 'Forbidden', content: new OA\JsonContent())]
     public function destroy(Transaction $transaction): JsonResponse
     {
-        $this->authorize('delete', $transaction);
         $transaction->delete();
-
         return response()->json(null, 204);
     }
 
